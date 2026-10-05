@@ -42,7 +42,7 @@ py -m venv venv
 
 .\venv\Scripts\Activate
 
-(env) python -m pip install -r requirements.txt
+(env) pip install -r requirements.txt
 
 ```
 
