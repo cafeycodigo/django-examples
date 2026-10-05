@@ -26,40 +26,25 @@ También se incluyen los módulos `automotora_basica`, `core` y `rrhh`. Consulta
 
 ## Instalación en Windows
 
+
+
+```cmd
+git clone https://github.com/cafeycodigo/django-examples.git sistema
+```
+
 Descarga o extrae el proyecto en una carpeta llamada `sistema`. Abre PowerShell
 en esa carpeta —donde se encuentra `manage.py`— y ejecuta:
 
-```powershell
+```cmd
+cd sistema
+
 py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python manage.py migrate
+
+.\.venv\Scripts\Activate
+
+(env) python -m pip install -r requirements.txt
+
 ```
-
-Para crear un usuario administrador:
-
-```powershell
-python manage.py createsuperuser
-```
-
-## Ejecución
-
-Inicia el servidor de desarrollo con:
-
-```powershell
-python manage.py runserver
-```
-
-Por defecto, Django sirve el proyecto en <http://127.0.0.1:8000/>.
-
-> **Nota:** la configuración de rutas del proyecto aún requiere revisión para
-> iniciar correctamente. En `sistema/urls.py` se referencia `core.urls`, pero
-> ese archivo no está presente actualmente.
-
-## Base de datos
-
-El proyecto usa SQLite. El comando `migrate` crea o actualiza la base local
-`db.sqlite3`; los datos de esa base no forman parte de la entrega.
 
 ## Dependencias
 
