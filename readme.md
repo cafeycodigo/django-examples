@@ -38,9 +38,9 @@ en esa carpeta —donde se encuentra `manage.py`— y ejecuta:
 ```cmd
 cd sistema
 
-py -m venv .venv
+py -m venv venv
 
-.\.venv\Scripts\Activate
+.\venv\Scripts\Activate
 
 (env) python -m pip install -r requirements.txt
 
