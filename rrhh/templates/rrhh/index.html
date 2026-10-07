@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Empleados | RRHH</title>
+</head>
+<body>
+    <main>
+        <h1>Empleados</h1>
+        {% if empleados %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>RUT</th>
+                        <th>Nombre</th>
+                        <th>Cargo</th>
+                        <th>Salario</th>
+                        <th>Fecha de ingreso</th>
+                        <th>Estado</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Fecha de creación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for empleado in empleados %}
+                        <tr>
+                            <td>{{ empleado.rut }}</td>
+                            <td>{{ empleado.nombre_completo }}</td>
+                            <td>{{ empleado.cargo }}</td>
+                            <td>{{ empleado.salario }}</td>
+                            <td>{{ empleado.fecha_ingreso|date:"d/m/Y" }}</td>
+                            <td>{% if empleado.activo %}Activo{% else %}Inactivo{% endif %}</td>
+                            <td>{{ empleado.email|default:"-" }}</td>
+                            <td>{{ empleado.telefono|default:"-" }}</td>
+                            <td>{{ empleado.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No hay empleados registrados.</p>
+        {% endif %}
+    </main>
+</body>
+</html>

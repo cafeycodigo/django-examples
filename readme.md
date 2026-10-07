@@ -46,6 +46,23 @@ py -m venv venv
 
 ```
 
+Luego de instalar las dependencias, crea las tablas de la base de datos:
+
+```powershell
+python manage.py migrate
+```
+
+Para cargar los 20 empleados de prueba:
+
+```powershell
+python manage.py seed_empleado
+```
+
+El seeder se puede volver a ejecutar sin duplicar empleados.
+
+Los empleados cargados se pueden consultar en el índice de RRHH:
+<http://127.0.0.1:8000/rrhh/>.
+
 ## Dependencias
 
 Las dependencias del proyecto están declaradas en `requirements.txt`. Si se
