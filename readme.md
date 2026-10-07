@@ -49,6 +49,8 @@ py -m venv venv
 Luego de instalar las dependencias, crea las tablas de la base de datos:
 
 ```powershell
+
+python manage.py makemigrations
 python manage.py migrate
 ```
 
