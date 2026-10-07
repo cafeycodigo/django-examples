@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-07",
+  "font_stack": null,
+  "palette": null,
+  "motion_library": null,
+  "spacing_scale": null,
+  "framework": "Django server-rendered templates",
+  "notes": "No project stylesheet or design tokens were present before this build."
+}

@@ -16,8 +16,8 @@
     --color-success: oklch(43% 0.12 155);
 
     --font-display: "Space Grotesk", "Switzer", sans-serif;
-    --font-body: "Switzer", "Space Grotesk", sans-serif;
-    --font-mono: "IBM Plex Mono", monospace;
+    --font-body: "Inter", "Space Grotesk", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
 
     --space-2xs: 0.25rem;
     --space-xs: 0.5rem;
