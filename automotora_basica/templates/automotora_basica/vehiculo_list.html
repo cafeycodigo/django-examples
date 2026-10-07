@@ -1,0 +1,85 @@
+{% extends "automotora_basica/base.html" %}
+
+{% block title %}Inventario de vehículos{% endblock %}
+
+{% block content %}
+    <section class="page-heading" aria-labelledby="page-title">
+        <div>
+            <p class="eyebrow">Inventario</p>
+            <h1 id="page-title">Vehículos registrados</h1>
+            <p class="page-intro">Consulta y actualiza los datos de cada vehículo.</p>
+        </div>
+        <p class="record-count"><strong>{{ total_vehiculos }}</strong> {% if total_vehiculos == 1 %}vehículo{% else %}vehículos{% endif %} en total</p>
+    </section>
+
+    <section class="inventory" aria-labelledby="inventory-title">
+        <div class="inventory-toolbar">
+            <div>
+                <h2 id="inventory-title">Listado</h2>
+                <p class="muted">Busca por patente, marca o modelo.</p>
+            </div>
+            <form class="search-form" method="get" role="search">
+                <label class="visually-hidden" for="vehicle-search">Buscar vehículos</label>
+                <input
+                    id="vehicle-search"
+                    class="form-control search-input"
+                    type="search"
+                    name="q"
+                    value="{{ consulta }}"
+                    placeholder="Ej.: Toyota o ABCD12"
+                >
+                <button class="button button--secondary" type="submit">Buscar</button>
+                {% if consulta %}
+                    <a class="text-link clear-search" href="{% url 'automotora_basica:vehiculo_list' %}">Limpiar</a>
+                {% endif %}
+            </form>
+        </div>
+
+        {% if vehiculos %}
+            <div class="table-wrap">
+                <table class="vehicle-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Patente</th>
+                            <th scope="col">Vehículo</th>
+                            <th scope="col">Año</th>
+                            <th scope="col">Kilometraje</th>
+                            <th scope="col">Combustible</th>
+                            <th scope="col"><span class="visually-hidden">Acciones</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vehiculo in vehiculos %}
+                            <tr>
+                                <td data-label="Patente"><span class="plate">{{ vehiculo.patente }}</span></td>
+                                <td data-label="Vehículo">
+                                    <span class="vehicle-name">{{ vehiculo.marca }} {{ vehiculo.modelo }}</span>
+                                    {% if vehiculo.color %}<span class="vehicle-detail">{{ vehiculo.color }}</span>{% endif %}
+                                </td>
+                                <td data-label="Año">{{ vehiculo.anio }}</td>
+                                <td data-label="Kilometraje">{{ vehiculo.kilometraje }} km</td>
+                                <td data-label="Combustible">{{ vehiculo.combustible }}</td>
+                                <td data-label="Acciones" class="row-actions">
+                                    <a class="text-link" href="{% url 'automotora_basica:vehiculo_update' vehiculo.pk %}">Editar</a>
+                                    <a class="text-link text-link--danger" href="{% url 'automotora_basica:vehiculo_delete' vehiculo.pk %}">Eliminar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% elif consulta %}
+            <div class="empty-state">
+                <h3>No hay coincidencias</h3>
+                <p>No encontramos vehículos para “{{ consulta }}”. Revisa la patente, marca o modelo e inténtalo otra vez.</p>
+                <a class="text-link" href="{% url 'automotora_basica:vehiculo_list' %}">Ver todo el inventario</a>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3>El inventario está vacío</h3>
+                <p>Registra un vehículo para comenzar a llevar el control de sus datos.</p>
+                <a class="button button--primary" href="{% url 'automotora_basica:vehiculo_create' %}">Registrar vehículo</a>
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

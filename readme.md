@@ -63,6 +63,13 @@ El seeder se puede volver a ejecutar sin duplicar empleados.
 Los empleados cargados se pueden consultar en el índice de RRHH:
 <http://127.0.0.1:8000/rrhh/>.
 
+## Inventario de automotora
+
+La página de Automotora permite buscar, registrar, editar y eliminar vehículos
+en <http://127.0.0.1:8000/automotora/>. Requiere iniciar sesión con una cuenta
+de personal (`is_staff`); se puede ingresar desde el inicio de sesión del
+administrador en `/admin/`.
+
 ## Dependencias
 
 Las dependencias del proyecto están declaradas en `requirements.txt`. Si se

@@ -1,0 +1,20 @@
+{% extends "automotora_basica/base.html" %}
+
+{% block title %}Eliminar vehículo{% endblock %}
+
+{% block content %}
+    <section class="form-page delete-page" aria-labelledby="page-title">
+        <a class="back-link" href="{% url 'automotora_basica:vehiculo_list' %}">← Volver al inventario</a>
+        <p class="eyebrow">Confirmación</p>
+        <h1 id="page-title">Eliminar vehículo</h1>
+        <p class="delete-copy">
+            Se eliminará <strong>{{ vehiculo.patente }} · {{ vehiculo.marca }} {{ vehiculo.modelo }}</strong>
+            del inventario. Esta acción no se puede deshacer.
+        </p>
+        <form class="form-actions" method="post">
+            {% csrf_token %}
+            <a class="button button--secondary" href="{% url 'automotora_basica:vehiculo_list' %}">Cancelar</a>
+            <button class="button button--danger" type="submit">Eliminar vehículo</button>
+        </form>
+    </section>
+{% endblock %}
