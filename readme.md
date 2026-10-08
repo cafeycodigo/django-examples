@@ -65,6 +65,12 @@ El seeder se puede volver a ejecutar sin duplicar empleados.
 Los empleados cargados se pueden consultar en el índice de RRHH:
 <http://127.0.0.1:8000/rrhh/>.
 
+Consulta las guías para obtener ejemplos y detalles de uso:
+
+- [Migraciones](./README_MIGRACIONES.md)
+- [Seeders](./README_SEEDER.md)
+- [Administración de Django](./README_ADMIN.md)
+
 ## Inventario de automotora
 
 La página de Automotora permite buscar, registrar, editar y eliminar vehículos
