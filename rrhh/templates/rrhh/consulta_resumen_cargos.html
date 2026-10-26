@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Resumen por Cargos | RRHH</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 950px; margin: 0 auto; }
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;
+        }
+        h1 { margin: 0; font-size: 1.75rem; color: #fff; }
+        .nav-links a {
+            color: var(--accent); text-decoration: none; padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border); border-radius: 6px; margin-left: 0.5rem;
+        }
+        .card {
+            background-color: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 8px; padding: 1.5rem;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { text-align: left; padding: 0.75rem; border-bottom: 1px solid var(--border); }
+        th { background-color: #0b1120; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
+        tr:hover td { background-color: rgba(255, 255, 255, 0.03); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div>
+                <h1>Distribución por Cargos</h1>
+                <p style="color: var(--text-muted); margin: 0.25rem 0 0 0;">Agrupaciones SQL generadas con annotate(Count, Avg, Sum)</p>
+            </div>
+            <nav class="nav-links">
+                <a href="{% url 'panel_consultas_web' %}">📊 Panel Principal</a>
+                <a href="{% url 'consulta_resumen_cargos' %}">🔗 Ver JSON</a>
+            </nav>
+        </header>
+
+        <section class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cargo</th>
+                        <th>N° Empleados</th>
+                        <th>Salario Promedio</th>
+                        <th>Total Planilla Cargo</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in resumen %}
+                        <tr>
+                            <td><strong>{{ item.cargo_nombre }}</strong></td>
+                            <td><span style="background: #0284c7; color:#fff; padding: 2px 8px; border-radius: 12px; font-weight: bold;">{{ item.total_empleados }}</span></td>
+                            <td>${{ item.salario_promedio|floatformat:2 }}</td>
+                            <td>${{ item.salario_total|floatformat:2 }}</td>
+                            <td>
+                                <a href="{% url 'consulta_por_cargo' %}?cargo={{ item.cargo_nombre }}&format=html" style="color: var(--accent); text-decoration: none;">Ver Empleados &rarr;</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5" style="color: var(--text-muted);">No hay cargos registrados.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>

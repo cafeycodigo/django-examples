@@ -18,6 +18,8 @@ proyecto:
    con Faker.
 4. **Administrar registros:** [README_ADMIN.md](./README_ADMIN.md) explica el
    panel Django y cómo configurarlo con código.
+5. **Aplicación de Eventos y Big Data:** [README_EVENTOS.md](./README_EVENTOS.md)
+   documenta la app `eventos` con más de 500 eventos y 30.000 personas asistentes.
 
 ## Aplicaciones y ejercicios
 
@@ -30,6 +32,7 @@ El proyecto contiene estos ejercicios del bloque 21–30:
 | 25 | `hospital` |
 | 27 | `streaming` |
 | 28 | `biblioteca` |
+| Eventos | `eventos` ([Guía](./README_EVENTOS.md)) |
 
 También contiene `automotora_basica`, `core` y `rrhh`. La lista de aplicaciones
 activas puede consultarse en [`sistema/settings.py`](./sistema/settings.py).

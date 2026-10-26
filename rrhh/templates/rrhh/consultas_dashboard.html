@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Panel de Consultas y Preguntas | RRHH</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;
+            flex-wrap: wrap; gap: 1rem;
+        }
+        h1 { margin: 0; font-size: 1.85rem; color: #fff; }
+        .nav-links a {
+            color: var(--accent); text-decoration: none; padding: 0.5rem 1rem;
+            border: 1px solid var(--border); border-radius: 6px; margin-left: 0.5rem;
+            display: inline-block;
+        }
+        .nav-links a:hover { background-color: var(--accent); color: #0f172a; }
+        .grid-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+        .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+        .stat-value { font-size: 1.6rem; font-weight: bold; margin-top: 0.5rem; color: #fff; }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card-title {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .json-link {
+            font-size: 0.8rem;
+            background: #0284c7;
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: normal;
+        }
+        .json-link:hover { background: #0369a1; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.92rem; }
+        th, td { text-align: left; padding: 0.65rem; border-bottom: 1px solid var(--border); }
+        th { background-color: #0b1120; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
+        tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
+        .form-inline {
+            display: flex; gap: 0.5rem; align-items: center; margin-top: 0.75rem; flex-wrap: wrap;
+        }
+        input, select {
+            background: #0b1120; border: 1px solid var(--border); color: #fff;
+            padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 0.9rem;
+        }
+        button {
+            background: var(--accent); border: none; color: #0f172a;
+            padding: 0.5rem 1rem; border-radius: 6px; font-weight: bold; cursor: pointer;
+        }
+        button:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div>
+                <h1>📊 Consultas de Base de Datos y Preguntas de Negocio</h1>
+                <p style="color: var(--text-muted); margin: 0.25rem 0 0 0;">
+                    Respuestas con el ORM de Django (Suma, Promedio, Filtros, Agrupaciones)
+                </p>
+            </div>
+            <nav class="nav-links">
+                <a href="{% url 'index' %}">⚡ Ver CRUD en JSON</a>
+                <a href="{% url 'index' %}?format=html">👥 Lista Empleados Web</a>
+            </nav>
+        </header>
+
+        <!-- Métricas Rápidas -->
+        <div class="grid-stats">
+            <div class="stat-card">
+                <div class="stat-label">Empleados Activos</div>
+                <div class="stat-value" style="color: var(--success);">{{ metricas.total_activos|default:0 }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Salario Promedio</div>
+                <div class="stat-value" style="color: var(--accent);">${{ metricas.promedio|default:0|floatformat:2 }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Salario Máximo</div>
+                <div class="stat-value" style="color: var(--warning);">${{ metricas.maximo|default:0|floatformat:2 }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Planilla Total Mensual</div>
+                <div class="stat-value" style="color: #c084fc;">${{ metricas.total_planilla|default:0|floatformat:2 }}</div>
+            </div>
+        </div>
+
+        <!-- Pregunta 1: ¿Quién tiene el salario más alto? -->
+        <section class="card">
+            <div class="card-title">
+                <span>⭐ Pregunta 1: ¿Quién o quiénes tienen el salario más alto?</span>
+                <a class="json-link" href="{% url 'consulta_salario_maximo' %}" target="_blank">Probar Endpoint JSON</a>
+            </div>
+            <p style="color: var(--text-muted); margin: 0.25rem 0 1rem 0;">
+                Calculado con <code>Empleado.objects.aggregate(Max('salario'))</code> y luego filtrando.
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>RUT</th>
+                        <th>Nombre Completo</th>
+                        <th>Cargo</th>
+                        <th>Salario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in empleados_top %}
+                        <tr>
+                            <td><code>{{ emp.rut }}</code></td>
+                            <td><strong>{{ emp.nombre_completo }}</strong></td>
+                            <td>{{ emp.cargo.nombre }}</td>
+                            <td style="color: var(--warning); font-weight: bold;">${{ emp.salario|floatformat:2 }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="4" style="color: var(--text-muted);">Sin empleados registrados.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Pregunta 2: ¿Cuántos empleados tienen salario mayor a X? -->
+        <section class="card">
+            <div class="card-title">
+                <span>💰 Pregunta 2: ¿Cuántos empleados tienen salario mayor a un monto dado?</span>
+                <a class="json-link" href="{% url 'consulta_salario_mayor' %}?monto=1000000" target="_blank">Probar Endpoint JSON</a>
+            </div>
+            <p style="color: var(--text-muted); margin: 0.25rem 0 1rem 0;">
+                Actualmente filtrando salario mayor a <strong>${{ monto_filtro|floatformat:2 }}</strong> (Total: {{ mayores_millon.count }} empleados).
+            </p>
+            <form class="form-inline" method="GET" action="{% url 'consulta_salario_mayor' %}">
+                <input type="hidden" name="format" value="html">
+                <label for="monto" style="font-size: 0.9rem; color: var(--text-muted);">Consultar otro monto:</label>
+                <input type="number" id="monto" name="monto" value="{{ monto_filtro }}" placeholder="Ej: 800000">
+                <button type="submit">Consultar</button>
+            </form>
+        </section>
+
+        <!-- Pregunta 3: ¿Cuántos son los empleados de cargo X? -->
+        <section class="card">
+            <div class="card-title">
+                <span>💼 Pregunta 3: ¿Cuántos son los empleados de un cargo específico?</span>
+                <a class="json-link" href="{% url 'consulta_por_cargo' %}?cargo=Analista" target="_blank">Probar Endpoint JSON</a>
+            </div>
+            <form class="form-inline" method="GET" action="{% url 'consulta_por_cargo' %}">
+                <input type="hidden" name="format" value="html">
+                <label for="cargo" style="font-size: 0.9rem; color: var(--text-muted);">Escribe o busca un cargo:</label>
+                <input type="text" id="cargo" name="cargo" placeholder="Ej: Analista, Desarrollador...">
+                <button type="submit">Buscar por Cargo</button>
+            </form>
+        </section>
+
+        <!-- Pregunta 4: Resumen de Cargos con anotaciones (GROUP BY) -->
+        <section class="card">
+            <div class="card-title">
+                <span>📈 Pregunta 4: Distribución y sueldo promedio por cada cargo</span>
+                <a class="json-link" href="{% url 'consulta_resumen_cargos' %}" target="_blank">Probar Endpoint JSON</a>
+            </div>
+            <p style="color: var(--text-muted); margin: 0.25rem 0 1rem 0;">
+                Calculado con <code>Cargo.objects.annotate(Count('empleados'), Avg('empleados__salario'))</code>.
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cargo</th>
+                        <th>N° Empleados</th>
+                        <th>Salario Promedio</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in resumen_cargos %}
+                        <tr>
+                            <td><strong>{{ c.nombre }}</strong></td>
+                            <td><span style="background: #0284c7; color:#fff; padding: 2px 8px; border-radius: 12px; font-weight: bold;">{{ c.total_empleados }}</span></td>
+                            <td>${{ c.salario_promedio|default:0|floatformat:2 }}</td>
+                            <td>
+                                <a href="{% url 'consulta_por_cargo' %}?cargo={{ c.nombre }}&format=html" style="color: var(--accent); text-decoration: none;">Ver Detalle &rarr;</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="4" style="color: var(--text-muted);">Sin cargos registrados.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECCIÓN: NUEVAS PROPUESTAS DIDÁCTICAS DEL ORM -->
+        <h2 style="color: var(--accent); margin-top: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
+            🚀 Nuevas Propuestas del ORM de Django
+        </h2>
+
+        <!-- Propuesta 1: Rango Salarial -->
+        <section class="card">
+            <div class="card-title">
+                <span>🎯 Propuesta 1: Filtrar por Rango Salarial (BETWEEN con <code>__range</code>)</span>
+                <a class="json-link" href="{% url 'consulta_rango_salarial' %}?min=800000&max=1500000" target="_blank">Endpoint JSON</a>
+            </div>
+            <p style="color: var(--text-muted); margin: 0.25rem 0 1rem 0;">
+                Código ORM: <code>Empleado.objects.filter(salario__range=(min, max))</code>
+            </p>
+            <form class="form-inline" method="GET" action="{% url 'consulta_rango_salarial' %}">
+                <input type="hidden" name="format" value="html">
+                <label style="color: var(--text-muted);">Sueldo Mínimo:</label>
+                <input type="number" name="min" value="800000" style="width: 130px;">
+                <label style="color: var(--text-muted);">Sueldo Máximo:</label>
+                <input type="number" name="max" value="1500000" style="width: 130px;">
+                <button type="submit">Filtrar Rango</button>
+            </form>
+        </section>
+
+        <!-- Propuesta 2: Búsqueda por Texto -->
+        <section class="card">
+            <div class="card-title">
+                <span>🔍 Propuesta 2: Búsqueda por Texto (ILIKE '%texto%' con <code>__icontains</code>)</span>
+                <a class="json-link" href="{% url 'consulta_buscar_nombre' %}?q=ana" target="_blank">Endpoint JSON</a>
+            </div>
+            <p style="color: var(--text-muted); margin: 0.25rem 0 1rem 0;">
+                Código ORM: <code>Empleado.objects.filter(nombre_completo__icontains=termino)</code>
+            </p>
+            <form class="form-inline" method="GET" action="{% url 'consulta_buscar_nombre' %}">
+                <input type="hidden" name="format" value="html">
+                <label style="color: var(--text-muted);">Nombre a buscar:</label>
+                <input type="text" name="q" placeholder="Ej: Perez, Carlos..." value="ana">
+                <button type="submit">Buscar Empleado</button>
+            </form>
+        </section>
+
+        <!-- Propuesta 3: Ranking Top N -->
+        <section class="card">
+            <div class="card-title">
+                <span>🏆 Propuesta 3: Ranking Top N Mejores Sueldos (<code>order_by</code> y <code>LIMIT [:N]</code>)</span>
+                <a class="json-link" href="{% url 'consulta_top_salarios' %}?limite=3" target="_blank">Endpoint JSON</a>
+            </div>
+            <p style="color: var(--text-muted); margin: 0.25rem 0 1rem 0;">
+                Código ORM: <code>Empleado.objects.order_by("-salario")[:limite]</code>
+            </p>
+            <form class="form-inline" method="GET" action="{% url 'consulta_top_salarios' %}">
+                <input type="hidden" name="format" value="html">
+                <label style="color: var(--text-muted);">Cantidad a mostrar:</label>
+                <input type="number" name="limite" value="5" min="1" max="50" style="width: 80px;">
+                <button type="submit">Ver Ranking</button>
+            </form>
+        </section>
+
+        <!-- Propuesta 4: Exclusión y Existencia -->
+        <section class="card">
+            <div class="card-title">
+                <span>🚫 Propuesta 4: Exclusión y Existencia (<code>exclude()</code> y <code>exists()</code>)</span>
+                <a class="json-link" href="{% url 'consulta_inactivos' %}" target="_blank">Endpoint JSON</a>
+            </div>
+            <p style="color: var(--text-muted); margin: 0.25rem 0 1rem 0;">
+                Código ORM: <code>Empleado.objects.exclude(activo=True).exists()</code>
+            </p>
+            <a href="{% url 'consulta_inactivos' %}?format=html" style="color: var(--accent); text-decoration: none; font-weight: bold;">
+                Ver empleados inactivos en HTML &rarr;
+            </a>
+        </section>
+
+        <!-- Propuesta 5: Consultas compuestas con Q -->
+        <section class="card">
+            <div class="card-title">
+                <span>⚡ Propuesta 5: Consulta Compuesta con Operador OR (Objetos <code>Q</code>)</span>
+                <a class="json-link" href="{% url 'consulta_avanzada_q' %}" target="_blank">Endpoint JSON</a>
+            </div>
+            <p style="color: var(--text-muted); margin: 0.25rem 0 1rem 0;">
+                Código ORM: <code>Empleado.objects.filter(Q(activo=False) | Q(salario__lt=600000))</code>
+            </p>
+            <a href="{% url 'consulta_avanzada_q' %}?format=html" style="color: var(--accent); text-decoration: none; font-weight: bold;">
+                Ver alerta de empleados (inactivos o salario &lt; $600.000) &rarr;
+            </a>
+        </section>
+    </div>
+</body>
+</html>
+

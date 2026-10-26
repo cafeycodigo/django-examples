@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ accion|default:"Formulario" }} Empleado | RRHH</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+        }
+        h1 { margin-top: 0; font-size: 1.5rem; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        label { display: block; margin-bottom: 0.4rem; font-size: 0.9rem; color: var(--text-muted); }
+        input[type="text"], input[type="email"], input[type="number"], select {
+            width: 100%; box-sizing: border-box; background: #0b1120; border: 1px solid var(--border);
+            color: #fff; padding: 0.6rem 0.8rem; border-radius: 6px; font-size: 0.95rem;
+        }
+        .checkbox-group { display: flex; align-items: center; gap: 0.5rem; }
+        .checkbox-group input { width: auto; }
+        .buttons { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        button {
+            flex: 1; background: var(--accent); color: #0f172a; border: none; padding: 0.75rem;
+            border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.95rem;
+        }
+        .cancel-btn {
+            background: #334155; color: #fff; text-decoration: none; text-align: center;
+            padding: 0.75rem; border-radius: 6px; font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>{{ accion|default:"Guardar" }} Empleado (Sin Django Forms)</h1>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="rut">RUT *</label>
+                    <input type="text" id="rut" name="rut" value="{{ empleado.rut|default:'' }}" required placeholder="12345678-9">
+                </div>
+
+                <div class="form-group">
+                    <label for="nombre_completo">Nombre Completo *</label>
+                    <input type="text" id="nombre_completo" name="nombre_completo" value="{{ empleado.nombre_completo|default:'' }}" required placeholder="Juan Pérez">
+                </div>
+
+                <div class="form-group">
+                    <label for="cargo_id">Cargo *</label>
+                    <select id="cargo_id" name="cargo_id" required>
+                        <option value="">-- Selecciona un cargo --</option>
+                        {% for cargo in cargos %}
+                            <option value="{{ cargo.id }}" {% if empleado.cargo_id == cargo.id %}selected{% endif %}>
+                                {{ cargo.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="salario">Salario *</label>
+                    <input type="number" id="salario" name="salario" step="0.01" min="0" value="{{ empleado.salario|default:'' }}" required placeholder="Ej: 1200000">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ empleado.email|default:'' }}" placeholder="ejemplo@empresa.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" id="telefono" name="telefono" value="{{ empleado.telefono|default:'' }}" placeholder="+56912345678">
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="activo" name="activo" value="true" {% if empleado is None or empleado.activo %}checked{% endif %}>
+                    <label for="activo" style="margin: 0; color: #fff;">Empleado Activo</label>
+                </div>
+
+                <div class="buttons">
+                    <button type="submit">{{ accion|default:"Guardar" }}</button>
+                    <a href="{% url 'index' %}?format=html" class="cancel-btn">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

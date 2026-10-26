@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Confirmar Eliminación | RRHH</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --border: #334155;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 3rem 1rem;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+        }
+        h1 { margin-top: 0; font-size: 1.4rem; color: #fff; }
+        p { color: var(--text-muted); font-size: 0.95rem; }
+        .buttons { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: center; }
+        button {
+            background: var(--danger); color: #fff; border: none; padding: 0.75rem 1.5rem;
+            border-radius: 6px; font-weight: bold; cursor: pointer;
+        }
+        .cancel-btn {
+            background: #334155; color: #fff; text-decoration: none; padding: 0.75rem 1.5rem;
+            border-radius: 6px; display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>⚠️ Confirmar Eliminación</h1>
+            <p>¿Estás seguro de que deseas eliminar permanentemente a <strong>{{ empleado.nombre_completo }}</strong> (RUT: {{ empleado.rut }}) de la base de datos?</p>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="buttons">
+                    <button type="submit">Sí, eliminar</button>
+                    <a href="{% url 'index' %}?format=html" class="cancel-btn">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

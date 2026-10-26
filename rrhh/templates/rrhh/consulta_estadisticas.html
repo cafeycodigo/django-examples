@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Estadísticas Globales | RRHH</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --success: #22c55e;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 950px; margin: 0 auto; }
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;
+        }
+        h1 { margin: 0; font-size: 1.75rem; color: #fff; }
+        .nav-links a {
+            color: var(--accent); text-decoration: none; padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border); border-radius: 6px; margin-left: 0.5rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
+        .stat-value { font-size: 1.75rem; font-weight: bold; margin-top: 0.5rem; color: #fff; }
+        .card {
+            background-color: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 8px; padding: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div>
+                <h1>Estadísticas Globales de Personal</h1>
+                <p style="color: var(--text-muted); margin: 0.25rem 0 0 0;">Cálculos agregados directamente con el ORM de Django</p>
+            </div>
+            <nav class="nav-links">
+                <a href="{% url 'panel_consultas_web' %}">📊 Panel Principal</a>
+                <a href="{% url 'consulta_estadisticas' %}">🔗 Ver JSON</a>
+            </nav>
+        </header>
+
+        <div class="grid">
+            <div class="stat-card">
+                <div class="stat-label">Empleados Activos</div>
+                <div class="stat-value" style="color: var(--success);">{{ metricas.total_empleados_activos }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Empleados Inactivos</div>
+                <div class="stat-value" style="color: #ef4444;">{{ metricas.total_empleados_inactivos }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Salario Promedio</div>
+                <div class="stat-value" style="color: var(--accent);">${{ metricas.salario_promedio|floatformat:2 }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Planilla Total Mensual</div>
+                <div class="stat-value" style="color: #a855f7;">${{ metricas.planilla_total_mensual|floatformat:2 }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Salario Mínimo</div>
+                <div class="stat-value">${{ metricas.salario_minimo|floatformat:2 }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Salario Máximo</div>
+                <div class="stat-value" style="color: #eab308;">${{ metricas.salario_maximo|floatformat:2 }}</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
