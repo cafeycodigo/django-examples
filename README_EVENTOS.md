@@ -159,71 +159,17 @@ Insertar 30.000 personas y 50.000 asistencias de forma individual con `Model.obj
 
 ---
 
-## 🌐 Vistas y Funcionalidades Web
+## 🌐 Índice de eventos
 
-La aplicación cuenta con una interfaz web moderna, responsiva y en modo oscuro:
+La única ruta del módulo es `GET /eventos/`. El índice devuelve todos los
+registros de `Evento` como una lista JSON, equivalente a
+`SELECT * FROM eventos_evento`. No aplica filtros ni límite:
 
-| Ruta | Nombre de URL | Descripción |
-| --- | --- | --- |
-| `/eventos/` | `eventos:eventos_list` | Catálogo general con métricas en tiempo real, buscador por texto, filtro de categorías, selector de tipo (Todos / Free / Pagados), ordenamiento y paginación. |
-| `/eventos/<id>/` | `eventos:evento_detalle` | Ficha técnica del evento, porcentaje de aforo completado, recaudación total y tabla paginada de asistentes con búsqueda en vivo. |
-| `/eventos/personas/` | `eventos:personas_list` | Directorio de las 30.000 personas registradas con buscador por nombre, RUT, email y conteo de eventos concurridos. |
-| `/eventos/personas/<id>/` | `eventos:persona_detalle` | Perfil del asistente con desglose de tickets, eventos concurridos y monto total invertido en entradas. |
-| `/eventos/categorias/` | `eventos:categorias_dashboard` | Dashboard analítico que compara eventos, asistencias y recaudación por cada categoría temática. |
-| `/eventos/api/stats/` | `eventos:api_stats` | Endpoint JSON con las métricas cuantitativas consolidadas. |
-
----
-
-## 🛡 Panel de Administración (Django Admin)
-
-Todos los modelos están registrados en el administrador de Django ([`eventos/admin.py`](./eventos/admin.py)) con configuraciones avanzadas:
-
-- **`CategoriaAdmin`**:
-  - Muestra el nombre, badge de color visual, fecha y la cantidad de eventos anotada dinámicamente con `Count('eventos')`.
-- **`PersonaAdmin`**:
-  - Búsqueda por RUT, nombre, email o ciudad; paginación optimizada a 25 registros por página y columna con el total de eventos asistidos.
-- **`EventoAdmin`**:
-  - Filtros laterales por categoría, gratuidad (`es_gratuito`), estado y modalidad online.
-  - Indicador visual verde para entradas `GRATIS / FREE` o monto en pesos.
-  - Jerarquía de navegación temporal por fecha (`date_hierarchy = 'fecha_inicio'`).
-  - Optimización de consultas con `list_select_related = ('categoria',)`.
-- **`AsistenciaAdmin`**:
-  - Búsqueda por código de ticket, nombre de persona, RUT, correo o título de evento.
-  - `list_select_related = ('evento', 'persona')` para evitar el problema de consultas N+1.
-
-> **Acceso al Administrador:**
-> - URL: `http://127.0.0.1:8000/admin/`
-> - Usuario: `admin`
-> - Contraseña: `admin`
-
----
-
-## 📡 API REST / JSON
-
-Puedes consumir las métricas clave de la plataforma realizando una solicitud `GET` a:
-
-```http
-GET /eventos/api/stats/
+```python
+Evento.objects.values()
 ```
 
-### Respuesta de ejemplo:
-
-```json
-{
-  "status": "success",
-  "data": {
-    "total_eventos": 520,
-    "eventos_free": 249,
-    "eventos_pago": 271,
-    "total_personas": 30000,
-    "personas_diferentes_asistentes": 30000,
-    "total_asistencias": 49960,
-    "recaudacion_total_clp": 968450000.0
-  }
-}
-```
-
----
+Si no hay eventos, la respuesta es una lista vacía (`[]`).
 
 ## 🚀 Guía de Ejecución Rápida
 
