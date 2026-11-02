@@ -1,0 +1,42 @@
+{
+  "audience": "Estudiante principiante de Python y HTML",
+  "durationMinutes": 40,
+  "objectives": [
+    {
+      "id": "o1",
+      "outcome": "Clasificar operaciones CRUD"
+    },
+    {
+      "id": "o2",
+      "outcome": "Explicar ruta, vista, modelo y plantilla"
+    },
+    {
+      "id": "o3",
+      "outcome": "Resolver y verificar la actualización de un correo"
+    }
+  ],
+  "activities": [
+    {
+      "title": "Caso de Ana y actualización de correo",
+      "objectives": [
+        "o1",
+        "o2",
+        "o3"
+      ],
+      "minutes": 8,
+      "instructions": "Clasificar el cambio de correo, explicar ruta y vista, actualizar ambos registros y comprobar duplicados.",
+      "solution": "Update, GET y POST en usuarios/7/editar/, usuario_actualizar, guardar Usuario y User; rechazar correo de otro registro."
+    }
+  ],
+  "assessments": [
+    {
+      "question": "Explica qué operación, ruta, vista y validaciones requiere editar el correo de Ana.",
+      "objectives": [
+        "o1",
+        "o2",
+        "o3"
+      ],
+      "expectedAnswer": "Update con ID, GET y POST a editar, usuario_actualizar, correo obligatorio y único excluyendo la propia ficha, guardar perfil y cuenta y comprobar persistencia."
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "slideCount": 17,
+  "slides": [
+    {
+      "part": "ppt/slides/slide1.xml",
+      "textRuns": 10
+    },
+    {
+      "part": "ppt/slides/slide2.xml",
+      "textRuns": 9
+    },
+    {
+      "part": "ppt/slides/slide3.xml",
+      "textRuns": 12
+    },
+    {
+      "part": "ppt/slides/slide4.xml",
+      "textRuns": 14
+    },
+    {
+      "part": "ppt/slides/slide5.xml",
+      "textRuns": 15
+    },
+    {
+      "part": "ppt/slides/slide6.xml",
+      "textRuns": 15
+    },
+    {
+      "part": "ppt/slides/slide7.xml",
+      "textRuns": 14
+    },
+    {
+      "part": "ppt/slides/slide8.xml",
+      "textRuns": 13
+    },
+    {
+      "part": "ppt/slides/slide9.xml",
+      "textRuns": 13
+    },
+    {
+      "part": "ppt/slides/slide10.xml",
+      "textRuns": 14
+    },
+    {
+      "part": "ppt/slides/slide11.xml",
+      "textRuns": 13
+    },
+    {
+      "part": "ppt/slides/slide12.xml",
+      "textRuns": 14
+    },
+    {
+      "part": "ppt/slides/slide13.xml",
+      "textRuns": 15
+    },
+    {
+      "part": "ppt/slides/slide14.xml",
+      "textRuns": 10
+    },
+    {
+      "part": "ppt/slides/slide15.xml",
+      "textRuns": 15
+    },
+    {
+      "part": "ppt/slides/slide16.xml",
+      "textRuns": 10
+    },
+    {
+      "part": "ppt/slides/slide17.xml",
+      "textRuns": 11
+    }
+  ],
+  "issues": [],
+  "visualReviewComplete": false,
+  "limitations": [
+    "No text-fit, overlap, style inheritance or grouped-transform analysis"
+  ]
+}

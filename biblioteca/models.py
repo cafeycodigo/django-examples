@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -70,6 +71,33 @@ class Ejemplar(models.Model):
         return self.codigo_barra
 
 
+class Usuario(models.Model):
+    id_usuario = models.AutoField(primary_key=True)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="perfil_biblioteca",
+        null=True,
+        blank=True
+    )
+    rut = models.CharField(max_length=12, unique=True)
+    nombre_completo = models.CharField(max_length=100)
+    email_institucional = models.EmailField(
+        max_length=100,
+        unique=True,
+        help_text="Correo institucional del usuario"
+    )
+    carrera_o_departamento = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True
+    )
+    activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.nombre_completo} ({self.rut})"
+
+
 class Prestamo(models.Model):
     id_prestamo = models.AutoField(primary_key=True)
 
@@ -79,8 +107,11 @@ class Prestamo(models.Model):
         db_column="id_ejemplar"
     )
 
-    rut_usuario = models.CharField(
-        max_length=12
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="prestamos_biblioteca",
+        db_column="id_usuario"
     )
 
     fecha_prestamo = models.DateField()
@@ -98,7 +129,8 @@ class Prestamo(models.Model):
     )
 
     def __str__(self):
-        return f"Préstamo #{self.id_prestamo}"
+        nombre = getattr(self.usuario, "get_full_name", lambda: "")() or self.usuario.username
+        return f"Préstamo #{self.id_prestamo} - {nombre}"
 
 
 class Multa(models.Model):

@@ -288,15 +288,35 @@ Por último, crear las tablas y los datos no hace que aparezcan en el admin. Hay
 que registrar `Categoria`, `Libro`, `Ejemplar`, `Prestamo` y `Usuario` en
 `biblioteca/admin.py` y conceder permisos a la cuenta que los administrará.
 
+## Seed de biblioteca
+
+Para generar datos de prueba en la app `biblioteca`:
+
+```powershell
+python manage.py seed_biblioteca
+```
+
+También puedes parametrizar las cantidades deseadas:
+
+```powershell
+python manage.py seed_biblioteca --usuarios 100 --libros 120 --ejemplares 200 --prestamos 150
+```
+
+Este comando genera:
+- **Usuarios** con RUT válido (algoritmo chileno módulo 11), nombre completo, carrera o departamento y **correo institucional** (`nombre.apellido@universidad.cl`, etc.).
+- **Libros** con ISBN, título, autor, editorial y año de publicación.
+- **Ejemplares** físicos asignados a estantes y pasillos con código de barra.
+- **Préstamos** vinculando el ejemplar al usuario solicitante, fechas de préstamo y pactada.
+- **Multas** automáticas para aquellos préstamos con retraso en la entrega.
+
 ## Consultar los datos generados
 
 - Empleados: <http://127.0.0.1:8000/rrhh/>.
 - Vehículos: <http://127.0.0.1:8000/automotora/>.
-- Los cargos y empleados también se administran desde `/admin/` con los
-  permisos apropiados.
+- Biblioteca y modelos del sistema: administrables en `/admin/` con los permisos apropiados.
 
 Consulta [README_ADMIN.md](./README_ADMIN.md) para ejemplos de administración.
-Los comandos implementados están en
-[`rrhh/management/commands/seed_empleado.py`](./rrhh/management/commands/seed_empleado.py)
-y
-[`automotora_basica/management/commands/seed_vehiculos.py`](./automotora_basica/management/commands/seed_vehiculos.py).
+Los comandos implementados están en:
+- [`rrhh/management/commands/seed_empleado.py`](./rrhh/management/commands/seed_empleado.py)
+- [`automotora_basica/management/commands/seed_vehiculos.py`](./automotora_basica/management/commands/seed_vehiculos.py)
+- [`biblioteca/management/commands/seed_biblioteca.py`](./biblioteca/management/commands/seed_biblioteca.py)
