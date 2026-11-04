@@ -15,6 +15,9 @@ urlpatterns = [
 
 
     # Crud de libros
-    
+    path("libros/", views.libro_listar, name="libro_listar"),
+    path("libros/crear/", views.libro_crear, name="libro_crear"),
+    path("libros/<int:pk>/", views.libro_detalle, name="libro_detalle"),
+    path("libros/<int:pk>/editar/", views.libro_actualizar, name="libro_actualizar"),
+    path("libros/<int:pk>/eliminar/", views.libro_eliminar, name="libro_eliminar"),
 ]
-

@@ -101,7 +101,37 @@ python manage.py runserver
 | Sección | URL | Descripción |
 | :--- | :--- | :--- |
 | **Panel Web Principal** | [http://127.0.0.1:8000/biblioteca/](http://127.0.0.1:8000/biblioteca/) | Dashboard responsivo con Bootstrap 5, tarjetas de métricas y tabla interactiva de préstamos con correo institucional. |
+| **Catálogo de libros** | [http://127.0.0.1:8000/biblioteca/libros/](http://127.0.0.1:8000/biblioteca/libros/) | CRUD web para crear, consultar, editar y eliminar títulos. |
 | **Administración Django** | [http://127.0.0.1:8000/admin/biblioteca/](http://127.0.0.1:8000/admin/biblioteca/) | Gestión de Libros, Ejemplares, Usuarios, Préstamos y Multas con filtros y búsquedas avanzadas. |
+
+## CRUD web de libros
+
+El catálogo administra el **título bibliográfico** (`Libro`); no crea copias físicas.
+Los ejemplares (`Ejemplar`) se gestionan por separado y se relacionan con el libro.
+La ficha del título muestra sus ejemplares y su estado.
+
+| Acción | Ruta |
+| :--- | :--- |
+| Listar libros | `/biblioteca/libros/` |
+| Crear libro | `/biblioteca/libros/crear/` |
+| Ver ficha y ejemplares | `/biblioteca/libros/<id>/` |
+| Editar libro | `/biblioteca/libros/<id>/editar/` |
+| Eliminar libro | `/biblioteca/libros/<id>/eliminar/` |
+
+La creación y edición leen los campos directamente desde `request.POST`, sin
+usar `forms.py` ni `ModelForm`. Antes de guardar, las vistas ejecutan
+`Libro.full_clean()`: así comprueban campos obligatorios, longitudes, el año
+numérico y que el ISBN único no esté repetido. Los datos opcionales vacíos se
+guardan como `NULL`, de acuerdo con el modelo. Los errores se muestran junto al
+formulario y los valores enviados se conservan para corregirlos.
+
+Un libro solo se elimina mediante confirmación POST y si no tiene ejemplares
+asociados. Esta restricción evita perder o dejar inconsistente el inventario físico.
+
+Las rutas tienen nombres propios (`libro_listar`, `libro_crear`,
+`libro_detalle`, `libro_actualizar` y `libro_eliminar`), separados de los nombres
+del CRUD de usuarios. Así, las plantillas pueden generar enlaces sin confundir
+los dos recursos.
 
 ---
 

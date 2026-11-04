@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import Ejemplar, Libro, Prestamo, Usuario
@@ -246,3 +247,120 @@ def usuario_eliminar(request, pk):
 
     return render(request, "biblioteca/usuario_confirm_delete.html", {"usuario": usuario})
 
+
+# =============================================================================
+# CRUD DE LIBROS
+# =============================================================================
+
+def _validar_libro(libro, datos):
+    """Carga los campos recibidos y devuelve errores de validación por campo."""
+    libro.titulo = datos.get("titulo", "").strip()
+    libro.autor = datos.get("autor", "").strip() or None
+    libro.isbn = datos.get("isbn", "").strip() or None
+    libro.editorial = datos.get("editorial", "").strip() or None
+
+    anio_publicacion = datos.get("anio_publicacion", "").strip()
+    libro.anio_publicacion = anio_publicacion or None
+
+    try:
+        libro.full_clean()
+    except ValidationError as error:
+        errores = {}
+        for campo, errores_campo in error.error_dict.items():
+            errores[campo] = []
+            for error_campo in errores_campo:
+                if campo == "titulo" and error_campo.code == "blank":
+                    mensaje = "El título es obligatorio."
+                elif campo == "isbn" and error_campo.code == "unique":
+                    mensaje = "Ya existe un libro con este ISBN."
+                elif campo == "anio_publicacion" and error_campo.code == "invalid":
+                    mensaje = "El año de publicación debe ser un número entero."
+                else:
+                    mensaje = error_campo.messages[0]
+                errores[campo].append(mensaje)
+        return errores
+
+    return {}
+
+
+def libro_listar(request):
+    """Muestra todos los títulos registrados en orden alfabético."""
+    libros = Libro.objects.all().order_by("titulo")
+    return render(request, "biblioteca/libro_list.html", {"libros": libros})
+
+
+def libro_detalle(request, pk):
+    """Muestra la ficha de un libro y los ejemplares físicos asociados."""
+    libro = get_object_or_404(Libro, pk=pk)
+    ejemplares = Ejemplar.objects.filter(id_libro=libro).order_by("codigo_barra")
+    return render(request, "biblioteca/libro_detail.html", {
+        "libro": libro,
+        "ejemplares": ejemplares,
+    })
+
+
+def libro_crear(request):
+    """Crea un libro leyendo directamente los campos enviados en request.POST."""
+    errores = {}
+    if request.method == "POST":
+        libro = Libro()
+        errores = _validar_libro(libro, request.POST)
+        if not errores:
+            libro.save()
+            messages.success(request, f"El libro «{libro.titulo}» se creó correctamente.")
+            return redirect("libro_detalle", pk=libro.pk)
+
+    return render(request, "biblioteca/libro_form.html", {
+        "datos": request.POST if request.method == "POST" else {},
+        "errores": errores,
+        "accion": "Crear",
+    })
+
+
+def libro_actualizar(request, pk):
+    """Edita un libro leyendo los datos directamente desde request.POST."""
+    libro = get_object_or_404(Libro, pk=pk)
+    errores = {}
+    if request.method == "POST":
+        errores = _validar_libro(libro, request.POST)
+        if not errores:
+            libro.save()
+            messages.success(request, f"El libro «{libro.titulo}» se actualizó correctamente.")
+            return redirect("libro_detalle", pk=libro.pk)
+        datos = request.POST
+    else:
+        datos = {
+            "titulo": libro.titulo,
+            "autor": libro.autor or "",
+            "isbn": libro.isbn or "",
+            "editorial": libro.editorial or "",
+            "anio_publicacion": libro.anio_publicacion or "",
+        }
+
+    return render(request, "biblioteca/libro_form.html", {
+        "datos": datos,
+        "errores": errores,
+        "accion": "Editar",
+        "libro": libro,
+    })
+
+
+def libro_eliminar(request, pk):
+    """Elimina un título solo cuando no tiene ejemplares físicos asociados."""
+    libro = get_object_or_404(Libro, pk=pk)
+
+    if request.method == "POST":
+        if Ejemplar.objects.filter(id_libro=libro).exists():
+            messages.error(
+                request,
+                "No se puede eliminar este libro mientras tenga ejemplares asociados. "
+                "Elimine o reasigne primero esos ejemplares.",
+            )
+            return redirect("libro_detalle", pk=libro.pk)
+
+        titulo = libro.titulo
+        libro.delete()
+        messages.success(request, f"El libro «{titulo}» se eliminó correctamente.")
+        return redirect("libro_listar")
+
+    return render(request, "biblioteca/libro_confirm_delete.html", {"libro": libro})
