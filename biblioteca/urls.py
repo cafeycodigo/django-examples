@@ -4,6 +4,8 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path("login/", views.iniciar_sesion, name="login"),
+    path("logout/", views.cerrar_sesion, name="logout"),
     path("crear/", views.prestamo_crear, name="prestamo_crear"),
 
     # Crud de usuarios

@@ -1,10 +1,51 @@
 from datetime import date, timedelta
 from django.contrib import messages
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import Ejemplar, Libro, Prestamo, Usuario
+
+
+def iniciar_sesion(request):
+    """Autentica con el backend de Django sin usar LoginView."""
+    destino = request.POST.get("next") or request.GET.get("next", "")
+    destino_seguro = url_has_allowed_host_and_scheme(
+        destino,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    )
+
+    if request.user.is_authenticated:
+        return redirect(destino if destino_seguro else "index")
+
+    error = ""
+    if request.method == "POST":
+        usuario = authenticate(
+            request,
+            username=request.POST.get("username", ""),
+            password=request.POST.get("password", ""),
+        )
+        if usuario is not None:
+            login(request, usuario)
+            return redirect(destino if destino_seguro else "index")
+        error = "El usuario o la contraseña no son correctos."
+
+    return render(request, "biblioteca/login.html", {
+        "error": error,
+        "next": destino if destino_seguro else "",
+    })
+
+
+def cerrar_sesion(request):
+    """Cierra la sesión activa únicamente mediante POST."""
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    logout(request)
+    return redirect("login")
 
 
 def index(request):
@@ -25,6 +66,7 @@ def index(request):
     return render(request, "biblioteca/index.html", context)
 
 
+@login_required
 def prestamo_crear(request):
     """Permite registrar un nuevo préstamo de libro para un usuario."""
     User = get_user_model()
@@ -95,6 +137,7 @@ def usuario_detalle(request, pk):
     })
 
 
+@login_required
 def usuario_crear(request):
     """Crea un nuevo usuario de biblioteca y su cuenta Django User con request.POST puro."""
     User = get_user_model()
@@ -163,6 +206,7 @@ def usuario_crear(request):
     return render(request, "biblioteca/usuario_form.html", {"accion": "Crear"})
 
 
+@login_required
 def usuario_actualizar(request, pk):
     """Actualiza los datos del usuario usando request.POST directo."""
     usuario = get_object_or_404(Usuario.objects.select_related("user"), pk=pk)
@@ -222,6 +266,7 @@ def usuario_actualizar(request, pk):
     })
 
 
+@login_required
 def usuario_eliminar(request, pk):
     """Elimina el usuario si no tiene préstamos activos asociados."""
     usuario = get_object_or_404(Usuario.objects.select_related("user"), pk=pk)
@@ -299,6 +344,7 @@ def libro_detalle(request, pk):
     })
 
 
+@login_required
 def libro_crear(request):
     """Crea un libro leyendo directamente los campos enviados en request.POST."""
     errores = {}
@@ -317,6 +363,7 @@ def libro_crear(request):
     })
 
 
+@login_required
 def libro_actualizar(request, pk):
     """Edita un libro leyendo los datos directamente desde request.POST."""
     libro = get_object_or_404(Libro, pk=pk)
@@ -345,6 +392,7 @@ def libro_actualizar(request, pk):
     })
 
 
+@login_required
 def libro_eliminar(request, pk):
     """Elimina un título solo cuando no tiene ejemplares físicos asociados."""
     libro = get_object_or_404(Libro, pk=pk)
